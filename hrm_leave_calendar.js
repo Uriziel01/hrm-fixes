@@ -1,9 +1,10 @@
 // ==UserScript==
-// @name         DTP HRM
+// @name         Comarch HRM leave calendar
 // @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  try to take over the world!
-// @author       You
+// @version      1.0
+// @description  Adds leave calendar on the bottom of Comarch HRM profile page
+// @author       Paweł Borecki
+// @match        https://hrm.online.comarch.pl/*/pracownicy/lista
 // @icon         https://www.google.com/s2/favicons?domain=comarch.pl
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
@@ -21,7 +22,7 @@
     myObserver.observe (document, obsConfig);
 
     function mutationHandler (mutationRecords) {
-        if(document.querySelector('#dashboard-pracownik') && !document.querySelector('#dtp_calendar') && !document.querySelector('.mini-kalendarz')) {
+        if(document.querySelector('#dashboard-pracownik') && !document.querySelector('#hrm_leave_calendar') && !document.querySelector('.mini-kalendarz')) {
             getCalendar();
         }
     }
@@ -37,18 +38,19 @@
         formData.append("data", dateObject.toISOString());
         formData.append("uzytkownikId", szyfrowaneId);
 
+        let calendar = document.createElement("div");
+        calendar.id = 'hrm_leave_calendar';
+        calendar.classList.add('row');
+        calendar.innerHTML += `<h3 class="mt-3 mb-3">Urlopy:</h3>`;
+
         GM.xmlHttpRequest({
             method: "POST",
             data: formData,
-            url: "https://hrm.online.comarch.pl/dtpzie_dtpzie/pl/Dashboard/PobierzDaneKalendarz/",
+            url: window.location.href.replace('pracownicy/lista', 'Dashboard/PobierzDaneKalendarz/'),
             onload: function(response) {
                 const data = JSON.parse(response.responseText);
-                let calendar = document.createElement("div");
                 let count = 0;
 
-                calendar.id = 'dtp_calendar';
-                calendar.classList.add('row');
-                calendar.innerHTML += `<h3 class="mt-3 mb-3">Urlopy:</h3>`;
                 for (let dataIndex in data) {
                     const row = data[dataIndex];
                     if (row.nieobecnoscZatwierdzono || row.delegacjaZatwierdzono || row.szkolenieZatwierdzono) {
