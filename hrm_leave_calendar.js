@@ -31,12 +31,7 @@
         const pracownikDataset = document.querySelector('#dashboard-pracownik').dataset;
         const id = pracownikDataset.id;
         const szyfrowaneId = pracownikDataset.szyfrowaneid;
-
-        let formData=new FormData();
-        let dateObject = new Date();
-
-        formData.append("data", dateObject.toISOString());
-        formData.append("uzytkownikId", szyfrowaneId);
+        const dateObject = new Date();
 
         let calendar = document.createElement("div");
         calendar.id = 'hrm_leave_calendar';
@@ -45,8 +40,16 @@
 
         GM.xmlHttpRequest({
             method: "POST",
-            data: formData,
-            url: window.location.href.replace('pracownicy/lista', 'Dashboard/PobierzDaneKalendarz/'),
+            data: JSON.stringify({
+                "data": dateObject.getFullYear() + '-' + new String(dateObject.getMonth()+1).padStart(2, '0') + '-' + new String(dateObject.getDate()).padStart(2, '0'),
+                "uzytkownikId": szyfrowaneId
+            }),
+            headers: {
+                'Accept': 'application/json',
+                "Content-Type": "application/json",
+                "hrmrequestverificationtoken": document.querySelector('[name=__RequestVerificationToken]').value
+            },
+            url: window.location.href.replace('pracownicy/lista', 'Dashboard/PobierzDaneKalendarz'),
             onload: function(response) {
                 const data = JSON.parse(response.responseText);
                 let count = 0;
