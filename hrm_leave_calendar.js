@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Comarch HRM leave calendar
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  Adds leave calendar on the bottom of Comarch HRM profile page
 // @author       Paweł Borecki
 // @match        https://hrm.online.comarch.pl/*/pracownicy/lista
